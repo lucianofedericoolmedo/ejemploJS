@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca API - Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container, .table-container {
+            margin-bottom: 20px;
+        }
+        input, button {
+            margin: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestión de Biblioteca</h1>
+
+    <div class="form-container">
+        <h2>Crear Socio</h2>
+        <input type="number" id="socio-id" placeholder="ID Socio" />
+        <input type="text" id="socio-nombre" placeholder="Nombre" />
+        <input type="text" id="socio-direccion" placeholder="Dirección" />
+        <button onclick="crearSocio()">Crear Socio</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Crear Libro</h2>
+        <input type="number" id="libro-id" placeholder="ID Libro" />
+        <input type="text" id="libro-titulo" placeholder="Título" />
+        <input type="text" id="libro-autor" placeholder="Autor" />
+        <input type="number" id="libro-disponibilidad" placeholder="Disponibilidad" />
+        <button onclick="crearLibro()">Crear Libro</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Crear Préstamo</h2>
+        <input type="number" id="prestamo-id-socio" placeholder="ID Socio" />
+        <input type="number" id="prestamo-id-libro" placeholder="ID Libro" />
+        <input type="date" id="prestamo-fecha" />
+        <input type="date" id="prestamo-fecha-devolucion" />
+        <button onclick="crearPrestamo()">Crear Préstamo</button>
+    </div>
+
+    <div class="table-container">
+        <h2>Lista de Socios</h2>
+        <button onclick="getSocios()">Ver Socios</button>
+        <table id="tabla-socios">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <h2>Lista de Libros</h2>
+        <button onclick="getLibros()">Ver Libros</button>
+        <table id="tabla-libros">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Disponibilidad</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <h2>Lista de Préstamos</h2>
+        <button onclick="getPrestamos()">Ver Préstamos</button>
+        <table id="tabla-prestamos">
+            <thead>
+                <tr>
+                    <th>ID Socio</th>
+                    <th>ID Libro</th>
+                    <th>Fecha Préstamo</th>
+                    <th>Fecha Devolución</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // URL base de la API
+        const API_URL = 'http://localhost:8080';
+
+        // Función para crear un socio
+        function crearSocio() {
+            const id = document.getElementById('socio-id').value;
+            const nombre = document.getElementById('socio-nombre').value;
+            const direccion = document.getElementById('socio-direccion').value;
+
+            const data = { id, nombre, direccion };
+
+            fetch(`${API_URL}/socios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Socio creado con éxito');
+                getSocios(); // Refrescar la lista de socios
+            });
+        }
+
+        // Función para crear un libro
+        function crearLibro() {
+            const id = document.getElementById('libro-id').value;
+            const titulo = document.getElementById('libro-titulo').value;
+            const autor = document.getElementById('libro-autor').value;
+            const disponibilidad = document.getElementById('libro-disponibilidad').value;
+
+            const data = { id, titulo, autor, disponibilidad };
+
+            fetch(`${API_URL}/libros`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Libro creado con éxito');
+                getLibros(); // Refrescar la lista de libros
+            });
+        }
+
+        // Función para crear un préstamo
+        function crearPrestamo() {
+            const idSocio = document.getElementById('prestamo-id-socio').value;
+            const idLibro = document.getElementById('prestamo-id-libro').value;
+            const fecha = document.getElementById('prestamo-fecha').value;
+            const fechaDevolucion = document.getElementById('prestamo-fecha-devolucion').value;
+
+            const data = { idSocio, idLibro, fechaPrestamo: fecha, fechaDevolucion };
+
+            fetch(`${API_URL}/prestamos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Préstamo creado con éxito');
+                getPrestamos(); // Refrescar la lista de préstamos
+            });
+        }
+
+        // Función para obtener y mostrar socios
+        function getSocios() {
+            fetch(`${API_URL}/socios`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla-socios').querySelector('tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(socio => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${socio.id}</td><td>${socio.nombre}</td><td>${socio.direccion}</td>`;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+
+        // Función para obtener y mostrar libros
+        function getLibros() {
+            fetch(`${API_URL}/libros`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla-libros').querySelector('tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(libro => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${libro.id}</td><td>${libro.titulo}</td><td>${libro.autor}</td><td>${libro.disponibilidad}</td>`;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+
+        // Función para obtener y mostrar préstamos
+        function getPrestamos() {
+            fetch(`${API_URL}/prestamos`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla-prestamos').querySelector('tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(prestamo => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${prestamo.idSocio}</td><td>${prestamo.idLibro}</td><td>${prestamo.fechaPrestamo}</td><td>${prestamo.fechaDevolucion}</td>`;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+    </script>
+</body>
+</html>
