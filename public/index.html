@@ -166,6 +166,7 @@
             .then(response => response.json())
             .then(data => {
                 alert('Préstamo creado con éxito');
+                console.warn(data);
                 getPrestamos(); // Refrescar la lista de préstamos
             });
         }

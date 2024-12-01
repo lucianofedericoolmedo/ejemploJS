@@ -1,12 +1,12 @@
 # USO DE API DE BIBLIOTECA
 
-## MODELOS 
-En data.js
+## MODELOS (CLASES)
+En models.js
 
-## CONTROLADOR
+## CONTROLADOR ()
 En app.js
 
-## VISTA
+## VISTA (HTML)
 En public/index.html
 Correr con 
 ./run_front.sh

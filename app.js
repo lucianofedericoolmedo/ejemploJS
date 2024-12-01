@@ -1,7 +1,7 @@
 // app.js
 const express = require('express');
 const cors = require('cors');
-const { Socios, Libros, Prestamos } = require('./data');
+const { Socios, Libros, Prestamos } = require('./models');
 const app = express();
 const port = 8080;
 
@@ -16,19 +16,23 @@ let prestamos = new Prestamos();
 
 // Rutas de la API
 
+app.get('/ejemplo', (req, res) => {
+    res.json('Hola Mundo');
+});
+
 // CRUD para socios
-app.post('/socios', (req, res) => {
+app.post('/socios', (req, res) => { // POST /socios --> CREATE
     //console.warn(req);
     const { id, nombre, direccion } = req.body;
     const nuevoSocio = socios.crearSocio(id, nombre, direccion);
     res.status(201).json(nuevoSocio);
 });
 
-app.get('/socios', (req, res) => {
+app.get('/socios', (req, res) => {  // GET /socios/:id --> LISTAR
     res.json(socios.obtenerSocios());
 });
 
-app.put('/socios/:id', (req, res) => {
+app.put('/socios/:id', (req, res) => { // PUT /socios/:id --> INSERTAR
     const { id } = req.params;
     const { nuevoNombre, nuevaDireccion } = req.body;
     const socioActualizado = socios.actualizarSocio(id, nuevoNombre, nuevaDireccion);
@@ -39,7 +43,7 @@ app.put('/socios/:id', (req, res) => {
     }
 });
 
-app.delete('/socios/:id', (req, res) => {
+app.delete('/socios/:id', (req, res) => {// DELETE /socios/:id --> BORRA
     const { id } = req.params;
     const socioEliminado = socios.eliminarSocio(id);
     if (socioEliminado) {
